@@ -16,25 +16,12 @@ library(extrafontdb)
 library(forcats)
 library(networkD3)
 
-
-load(factions_09, file =  "factions_09.Rda")
-load(mps09, file =  "mps09.Rda")
-load(agenda, file =  "agenda.Rda")
-load(amendments_voting, file =  "amendments_voting.Rda")
-load(out_amends, file =  "out_amends.Rda")
-
+# Additional info and datasets
+source("helper.R", encoding = "UTF-8")
 
 # 1. UI ####
 ui <- navbarPage("Як нардепи Ради-9 подають поправки і як їх приймають", position = "fixed-top",
-                 #theme = "C:/Users/Oksana/Documents/R_JOB/amends_rada9/www/bootstrap.css", 
                  theme=shinytheme("united"),
-                 
-                 #tags$head(
-                 #    tags$link(href = "bootstrap.min.css", rel = "stylesheet")
-                 #),
-                 # https://bootswatch.com/
-                 #includeCSS("C:/Users/Oksana/Documents/R_JOB/amends_rada9/www/bootstrap.css"),
-                 
                  # tabPanel-1 ####
                  tabPanel(title = "Графік",
                           br(),
@@ -57,15 +44,11 @@ ui <- navbarPage("Як нардепи Ради-9 подають поправки
                             mainPanel(
                               tabsetPanel(type = "tabs",
                                           tabPanel("Топ-20 подавачів поправок, пофракційно",
-                                                   #h4(strong(paste("Усього відбулося", length(act_amends$id_event), 
-                                                   #                "голосувань за поправки, які набрали 226 голосів"))),
                                                    br(),
                                                    plotly::plotlyOutput("plot", height = "800px")
                                                    # br(),   br(),
                                           ),
                                           tabPanel("Топ-10 нардепів, чиї правки найбільше приймали",
-                                                   #h4(strong(paste("Усього відбулося", length(amendments_voting$id_event),
-                                                   #                "голосувань за поправки"))),
                                                    br(),
                                                    plotly::plotlyOutput("positive_amends_plot", height = "800px")
                                           ))))),
@@ -77,11 +60,9 @@ ui <- navbarPage("Як нардепи Ради-9 подають поправки
                           br(),
                           sidebarLayout(
                             sidebarPanel(
-                              #h3("Налаштуйте фільтри", style="font-weight:bold"),
                               selectInput('faction_tab2', 
                                           'Вибрати фракцію чи групу', 
                                           choices = unique(amends_by_mps_WO$factions), 
-                                          #multiple = TRUE, 
                                           selected = "Батьківщина"),     
                               # CSV UI 
                               downloadButton("downloadData_table", "Завантажити дані таблиці і графіка"),
@@ -118,7 +99,7 @@ ui <- navbarPage("Як нардепи Ради-9 подають поправки
                                 target = "_blank")),
                             mainPanel(
                               tabsetPanel(type = "tabs",
-                                          # 3.1 < 226 голосів ####
+                                          # 3.1 226 votes ####
                                           tabPanel("Поправки 226 голосів",
                                                    h4(strong(paste("Усього відбулося", length(act_amends$id_event), 
                                                                    "голосувань за поправки, які набрали 226 голосів"))),
@@ -145,10 +126,7 @@ ui <- navbarPage("Як нардепи Ради-9 подають поправки
                                                    plotly::plotlyOutput("top_per_bill", width = "950px", height = "550px")
                                           ))))),
                  
-                 
-                 
-                 
-                 # tabPanel-44 ####
+                 # tabPanel-4 ####
                  tabPanel(title = "Мережа",
                           br(),
                           br(),
@@ -156,25 +134,20 @@ ui <- navbarPage("Як нардепи Ради-9 подають поправки
                           br(),
                           sidebarLayout(
                             sidebarPanel(
-
                               sliderInput("amends_connection",
                                           "Кількість поданих спільно поправок",
                                           min = 1, 
                                           max = 15,
                                           value = 5),
                               # CSV UI 
-                              #downloadButton("downloadData", "Завантажити дані таблиці і графіка"),
                               br(),
                               br(),
                               h4("Оновлено 6 жовтня 2020 року"),
                               a(href = "https://www.rada.gov.ua/", 
                                 "Дані персональних сторінок законодавчої активності з сайту Верховної Ради", target = "_blank")),
                             mainPanel(
-                              
                               forceNetworkOutput("network_amends")
-                              
                             ))),
-                 
                  
                  # tabPanel-5 ####
                  tabPanel(title = "Про інструмент",
